@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { FlatList, Text, View } from "react-native";
 
-import AsyncStorage, { useAsyncStorage} from "@react-native-async-storage/async-storage";
+import AsyncStorage, { useAsyncStorage } from "@react-native-async-storage/async-storage";
 
 import { Card, CardProps } from "../../components/Card";
 import { HeaderHome } from "../../components/HeaderHome";
@@ -14,12 +14,12 @@ import { savepass } from "../../constants/storage";
 
 export function Home() {
   const [data, setData] = useState<CardProps[]>([]);
- const { getItem, setItem } = useAsyncStorage(savepass);
+  const { getItem, setItem } = useAsyncStorage(savepass);
 
   async function handleFetchData() {
     const response = await getItem();
     const data = response ? JSON.parse(response) : [];
-   
+
     setData(data);
   }
 
@@ -29,14 +29,16 @@ export function Home() {
     }, [])
   );
 
-  async function handleRemovePassword(id: string | number[]){
-     const response = await getItem();
-     const previousData = response ? JSON.parse(response) : [];
-     
-     const data = previousData.filter((item: CardProps) => item.id !== id);
-     setItem(JSON.stringify(data));
-     setData(data);
+  async function handleRemovePassword(id: string | number[]) {
+    const response = await getItem();
+    const previousData = response ? JSON.parse(response) : [];
+
+    const data = previousData.filter((item: CardProps) => item.id !== id);
+    setItem(JSON.stringify(data));
+    setData(data);
   }
+
+  function handleRemoveAllPass() { AsyncStorage.clear(); }
 
   return (
     <View style={styles.container}>
@@ -53,11 +55,13 @@ export function Home() {
         keyExtractor={(item) => String(item.id)}
         style={styles.list}
         contentContainerStyle={styles.listContent}
-        renderItem={({ item }) => <Card data={item} onPress={() => handleRemovePassword(item?.id)} />}
+        renderItem={({ item }) => (
+          <Card data={item} onPress={() => handleRemovePassword(item?.id)} />
+        )}
       />
 
       <View style={styles.footer}>
-        <Button title="Limpar lista" />
+        <Button title="Limpar lista" onPress={handleRemoveAllPass} />
       </View>
     </View>
   );

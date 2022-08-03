@@ -36,9 +36,10 @@ export function Form() {
       const response = await getItem();
       const prevData = response ? JSON.parse(response) : [];
 
-      const sendData: CardProps[] = [...prevData, newData];
-
+      //const sendData: CardProps[] = [...prevData, newData];
+      const sendData: Array<CardProps> = [...prevData, newData];
       await setItem(JSON.stringify(sendData));
+
       Toast.show(optionsMsg);
     } catch (error) {
       console.error(error);
